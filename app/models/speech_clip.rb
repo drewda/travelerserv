@@ -1,3 +1,3 @@
-class SpeechClip < ActiveRecord:Base
+class SpeechClip < ActiveRecord::Base
   
 end

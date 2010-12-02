@@ -1,3 +1,3 @@
-class QuestionnaireField < ActiveRecord:Base
+class QuestionnaireField < ActiveRecord::Base
   
 end

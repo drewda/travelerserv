@@ -1,3 +1,3 @@
-class QuestionnaireFieldChoice < ActiveRecord:Base
+class QuestionnaireFieldChoice < ActiveRecord::Base
   
 end

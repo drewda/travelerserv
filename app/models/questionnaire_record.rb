@@ -1,3 +1,3 @@
-class QuestionnaireRecord < ActiveRecord:Base
+class QuestionnaireRecord < ActiveRecord::Base
   
 end
