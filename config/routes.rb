@@ -1,4 +1,10 @@
 Travelerserv::Application.routes.draw do
+  devise_for :users
+
+  resources :travel_fixes
+  
+  match 'experimenter/device/:device_id/sms_config' => 'device#sms_config'
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

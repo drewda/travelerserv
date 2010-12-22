@@ -1,0 +1,2 @@
+module TravelFixesHelper
+end

@@ -4,7 +4,7 @@ class Traveler < ActiveRecord::Migration
     
     create_table :devices do |t|
       t.integer :lab_id
-      t.integer :participant_id
+      t.integer :participant_id, :null => true
       t.string :identification
       t.string :kind
       t.string :name

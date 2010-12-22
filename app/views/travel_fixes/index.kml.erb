@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>travel fixes</name>
+					<% @travel_fixes.each do |travel_fix| %>
+	  <Placemark>
+	    <name>Simple placemark</name>
+	    <description>Attached to the ground. Intelligently places itself 
+	       at the height of the underlying terrain.</description>
+	    <Point>
+	      <coordinates><%= "#{travel_fix.longitude}, #{travel_fix.latitude}, 0" %></coordinates>
+	    </Point>
+	  </Placemark>
+					<% end %>
+
+  </Document>
+</kml>

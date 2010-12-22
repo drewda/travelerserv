@@ -1,0 +1,1 @@
+RailsAdmin.authenticate_with {}
