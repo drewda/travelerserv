@@ -42,6 +42,8 @@ class TravelFixesController < ApplicationController
   # POST /travel_fixes.xml
   def create
     @travel_fix = TravelFix.new(params[:travel_fix])
+    @travel_fix.device = Device.where(params[:device]).first
+    @travel_fix.save
 
     respond_to do |format|
       if @travel_fix.save
