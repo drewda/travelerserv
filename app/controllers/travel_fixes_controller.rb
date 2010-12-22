@@ -43,6 +43,9 @@ class TravelFixesController < ApplicationController
   def create
     @travel_fix = TravelFix.new(params[:travel_fix])
     @travel_fix.device = Device.where(params[:device]).first
+    if @travel_fix.device.participant
+      @travel_fix.participant = @travel_fix.device.participant
+    end
     @travel_fix.save
 
     respond_to do |format|

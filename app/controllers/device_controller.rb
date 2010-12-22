@@ -47,7 +47,7 @@ class DeviceController < ApplicationController
       d = {
           'From' => CALLER_ID,
           'To' => @device.phone_number,
-          'Body' => 'AT+GTSFR=gl100,0,0,0,1,1,7,200,1,0,20101112172100',
+          'Body' => 'AT+GTSFR=gl100,1,0,0,1,1,7,200,1,0,20101112172100',
       }
       resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/SMS/Messages", 'POST', d)
       resp.error! unless resp.kind_of? Net::HTTPSuccess
