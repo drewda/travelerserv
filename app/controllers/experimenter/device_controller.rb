@@ -1,4 +1,4 @@
-class DeviceController < ApplicationController
+class Experimenter::DeviceController < ApplicationController
   
   # your Twilio authentication credentials
   ACCOUNT_SID = 'AC6f5cc3da8ccabab8a32f4b2867246b9c'

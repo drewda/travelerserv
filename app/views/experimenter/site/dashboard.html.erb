@@ -1,0 +1,18 @@
+<%= javascript_include_tag "jquery", "json2", "underscore", "backbone", "backbone.rails", "openlayers" %>
+
+<script language="javascript">
+$(document).ready(function() {
+	window.TravelFix = Backbone.Model.extend({
+		name: 'travel_fix'
+	});
+	
+	window.TravelFixes = Backbone.Collection.extend({
+		name: 'travel_fixes',
+		model: TravelFix,
+		url: '/api/travel_fixes.json'
+	});
+	
+	window.travelFixes = new TravelFixes;
+	travelFixes.refresh(<%= @travel_fixes.to_json.html_safe %>);
+});
+</script>

@@ -1,9 +1,22 @@
 Travelerserv::Application.routes.draw do
   devise_for :users
 
-  resources :travel_fixes
+  # api
+  namespace :api do
+    resources :travel_fixes
+  end
+
+  # mobile api
+  namespace :mobile do
+    resources :travel_fixes
+  end
   
-  match 'experimenter/device/:device_id/sms_config' => 'device#sms_config'
+  namespace :experimenter do
+    root :to => 'site#dashboard'
+    resources :participants
+    match 'device/:device_id/sms_config' => 'device#sms_config'
+  end
+  
   
   # The priority is based upon order of creation:
   # first created -> highest priority.
