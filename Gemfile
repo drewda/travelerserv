@@ -13,3 +13,6 @@ gem 'paperclip'
 gem 'twiliolib'
 
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
+
+gem 'compass'
+gem 'haml'

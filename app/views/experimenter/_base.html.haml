@@ -1,0 +1,10 @@
+%html{ :xmlns => "http://www.w3.org/1999/xhtml", :lang => "en", "xml:lang" => "en"}
+  %head
+    %meta{'http-equiv' => "content-type", :content => "text/html;charset=UTF-8"}
+    %title= yield(:title)
+    = csrf_meta_tag
+    = javascript_include_tag "jquery", "strftime", "json2", "underscore", "backbone", "backbone.rails", "openlayers/OpenLayers"
+    = yield(:head)
+    
+  %body
+    = yield(:content)

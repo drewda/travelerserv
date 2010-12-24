@@ -1,0 +1,53 @@
+// This import applies a global reset to any page that imports this stylesheet.
+@import "blueprint/reset";
+
+// To configure blueprint, edit the partials/base.sass file.
+@import "partials/base";
+
+// Import all the default blueprint modules so that we can access their mixins.
+@import "blueprint";
+
+// Import the non-default scaffolding module.
+@import "blueprint/scaffolding";
+
+#container {
+  @include container;
+}
+
+#map {
+	@include column(24, true);
+	height: 500px;
+}
+// http://www.mail-archive.com/openlayers-users@lists.osgeo.org/msg01683.html
+.olLayerGoogleCopyright {
+    top:-1000px;
+}
+
+#travel-fix-column {
+  @include column(8);
+  height: 400px;
+  overflow-y: auto;
+}
+
+.travel-fix-item {
+  
+}
+.travel-fix-item.selected {
+  background: #66ccff;
+}
+.travel-fix-item.highlighted {
+  background: #ffcc66;
+}
+
+#trip-column {
+  @include column(8);
+}
+
+#activity-column {
+  @include column(8, true);
+}
+
+h1 {
+  font: bold 16px Arial;
+  text-align: center;
+}
