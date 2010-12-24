@@ -113,17 +113,18 @@
                 map.getProjectionObject()
             ));
             this.model.marker = marker;
-            // $(this.el).css('background', '#006DEE');
-            $(this.el).addClass('highlighted')
+            $(this.el).addClass('selected')
           }
           else {
             travelFixLayer.removeFeatures(this.model.marker);
             this.model.marker = null;
-            $(this.el).removeClass('selected', 'highlighted');
+            $(this.el).removeClass('selected highlighted');
           }
         },
         highlightMarker: function() {
           if (this.model.marker) {
+            $(this.el).removeClass('selected').addClass('highlighted')
+            
             travelFixSelectControl.select(this.model.marker);
             
             previousMapCenter = map.getCenter();
@@ -131,14 +132,12 @@
                 new OpenLayers.Projection("EPSG:4326"),
                 map.getProjectionObject()
             ));
-            $(this.el).addClass('highlighted')
           }
         },
         unhighlighMarker: function() {
           if (this.model.marker) {
+            $(this.el).removeClass('selected').addClass('highlighted');
             travelFixSelectControl.unselect(this.model.marker);
-            $(this.el).removeClass('highlighted');
-            $(this.el).addClass('selected')
           }
           map.panTo(previousMapCenter);
         }
@@ -161,6 +160,13 @@
       });
       
       window.travelFixListView = new TravelFixListView;
+      
+      // CONTROLS
+      $('#select-all-travel-fixes').click(function(event) {
+        $('#travel-fix-list :checkbox').each(function(index, element) {
+          if ($(element).attr('checked') != true) $(element).trigger('click');
+        });
+      });
     });
   
   #container
@@ -168,6 +174,7 @@
   
     #travel-fix-column
       %h1 Travel Fixes
+      %a#select-all-travel-fixes(href='#') show all
       %ul#travel-fix-list
   
     #trip-column
