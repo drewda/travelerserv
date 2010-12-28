@@ -23,9 +23,23 @@
     top:-1000px;
 }
 
+#participant-column {
+  @include column(6);
+  height: 350px;
+  overflow-y: auto;
+}
+.participant-item {
+}
+.participant-item.selected {
+  background: #66ccff;
+}
+.participant-item.highlighted {
+  background: #ffcc66;
+}
+
 #travel-fix-column {
-  @include column(8);
-  height: 400px;
+  @include column(6);
+  height: 350px;
   overflow-y: auto;
 }
 
@@ -40,11 +54,11 @@
 }
 
 #trip-column {
-  @include column(8);
+  @include column(6);
 }
 
 #activity-column {
-  @include column(8, true);
+  @include column(6, true);
 }
 
 h1 {

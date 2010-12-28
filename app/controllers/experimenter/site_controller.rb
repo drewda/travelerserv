@@ -1,5 +1,8 @@
 class Experimenter::SiteController < ApplicationController
+  before_filter :authenticate_experimenter!
+  
   def dashboard
-    @travel_fixes = TravelFix.all
+    @participants = Participant.all
+    #@travel_fixes = TravelFix.all
   end
 end

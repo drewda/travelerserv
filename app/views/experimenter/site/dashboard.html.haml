@@ -16,7 +16,10 @@
       // BASE MAP
       map = new OpenLayers.Map('map');
       map.addControl(new OpenLayers.Control.LayerSwitcher());
-      
+      var ghyb = new OpenLayers.Layer.Google(
+          "Google Hybrid",
+          {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+      );
       var gphy = new OpenLayers.Layer.Google(
           "Google Physical",
           {type: google.maps.MapTypeId.TERRAIN}
@@ -25,15 +28,11 @@
           "Google Streets", // the default
           {numZoomLevels: 20}
       );
-      var ghyb = new OpenLayers.Layer.Google(
-          "Google Hybrid",
-          {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
-      );
       var gsat = new OpenLayers.Layer.Google(
           "Google Satellite",
           {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
       );
-      map.addLayers([gphy, gmap, ghyb, gsat]);
+      map.addLayers([ghyb, gphy, gmap, gsat]);
       // TRAVEL FIXES
       var travelFixStyleMap = new OpenLayers.StyleMap({
           "default": new OpenLayers.Style({
@@ -74,23 +73,67 @@
       previousMapCenter = map.getCenter();
       
       // DATA
+      window.Participant = Backbone.Model.extend({
+        name: 'participant',
+        initialize: function() {
+          this.display = false;
+          this.travelFixes = new TravelFixes;
+          this.travelFixes.url = '/api/participants/' + this.id + '/travel_fixes.json';
+          this.travelFixes.bind('refresh', function() {
+            travelFixes.add(this.models);
+          });
+        },
+      });
       window.TravelFix = Backbone.Model.extend({
         name: 'travel_fix',
         marker: null
       });
       
+      window.Participants = Backbone.Collection.extend({
+        name: 'participants',
+        model: Participant,
+        url: '/api/participants.json'
+      });
       window.TravelFixes = Backbone.Collection.extend({
         name: 'travel_fixes',
         model: TravelFix,
-        url: '/api/travel_fixes.json'
+        //url: '/api/travel_fixes.json'
       });
       
       window.travelFixes = new TravelFixes;
+      window.participants = new Participants;
+      
+      window.ParticipantItemView = Backbone.View.extend({
+        tagName: 'li',
+        className: 'participant-item',
+        template: _.template('<input type="checkbox" id="participant-<%= id %>" class="checkbox"/> <%= first_name + " " + last_name %>'),
+        events: {
+          "click .checkbox" : "toggle"
+        },
+        render: function() {
+          $(this.el).html(this.template(this.model.toJSON()));
+          return this;
+        },
+        toggle: function() {
+          if (this.model.display == false) {
+            this.model.display = true;
+            this.model.travelFixes.fetch();
+            // will be added to travelFixes by this.travelFixes.bind('refresh', function() {...
+            $(this.el).addClass('selected');
+          }
+          else {
+            this.model.display = false;
+            travelFixes.remove(this.model.travelFixes.models);
+            $(this.el).removeClass('selected highlighted');
+          }
+        },
+      });
+      
       
       window.TravelFixItemView = Backbone.View.extend({
         tagName: 'li',
         className: 'travel-fix-item',
-        template: _.template('<input type="checkbox" id="travel-fix-<%= travel_fix.id %>" class="checkbox"/> <%= new Date(travel_fix.created_at).strftime("%A, %b %d %Y %I:%M %p") %>'),
+        template: _.template('<input type="checkbox" id="travel-fix-<%= id %>" class="checkbox"/> <%= new Date(created_at).strftime("%a, %b %d %Y %I:%M %p") %>'),
         events: {
           "click .checkbox" : "toggle",
           "mouseover"       : "highlightMarker",
@@ -113,7 +156,7 @@
                 map.getProjectionObject()
             ));
             this.model.marker = marker;
-            $(this.el).addClass('selected')
+            $(this.el).addClass('selected');
           }
           else {
             travelFixLayer.removeFeatures(this.model.marker);
@@ -124,6 +167,8 @@
         highlightMarker: function() {
           if (this.model.marker) {
             $(this.el).removeClass('selected').addClass('highlighted')
+            
+            $('#participant-' + this.model.attributes.participant_id).parent().removeClass('selected').addClass('highlighted');
             
             travelFixSelectControl.select(this.model.marker);
             
@@ -137,9 +182,26 @@
         unhighlighMarker: function() {
           if (this.model.marker) {
             $(this.el).removeClass('selected').addClass('highlighted');
+            $('#participant-' + this.model.attributes.participant_id).parent().addClass('selected').removeClass('highlighted');
             travelFixSelectControl.unselect(this.model.marker);
           }
           map.panTo(previousMapCenter);
+        }
+      });
+      
+      window.ParticipantListView = Backbone.View.extend({
+        id: 'participant-list',
+        initialize: function() {
+          _.bindAll(this, 'addAll');
+          participants.bind('refresh', this.addAll);
+          participants.refresh(#{@participants.to_json.html_safe});
+        },
+        addOne: function(participant) {
+          var view = new ParticipantItemView({model: participant});
+          this.$("#participant-list").append(view.render().el);
+        },
+        addAll: function() {
+          participants.each(this.addOne);
         }
       });
       
@@ -148,17 +210,21 @@
         initialize: function() {
           _.bindAll(this, 'addAll');
           travelFixes.bind('refresh', this.addAll);
-          travelFixes.refresh(#{@travel_fixes.to_json.html_safe});
+          travelFixes.bind('add', this.addAll);
+          travelFixes.bind('remove', this.addAll);
+          //travelFixes.refresh(#{@travel_fixes.to_json.html_safe});
         },
         addOne: function(travelFix) {
           var view = new TravelFixItemView({model: travelFix});
           this.$("#travel-fix-list").append(view.render().el);
         },
         addAll: function() {
+          $('#travel-fix-list').empty();
           travelFixes.each(this.addOne);
         }
       });
       
+      window.participantListView = new ParticipantListView;
       window.travelFixListView = new TravelFixListView;
       
       // CONTROLS
@@ -171,6 +237,10 @@
   
   #container
     #map
+    
+    #participant-column
+      %h1 Participants
+      %ul#participant-list
   
     #travel-fix-column
       %h1 Travel Fixes

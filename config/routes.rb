@@ -1,9 +1,11 @@
 Travelerserv::Application.routes.draw do
-  devise_for :users
+  devise_for :users, :experimenters, :participants
 
   # api
   namespace :api do
-    resources :travel_fixes
+    resources :participants do
+      resources :travel_fixes
+    end
   end
 
   # mobile api

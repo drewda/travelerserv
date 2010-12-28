@@ -108,12 +108,36 @@ a img {
 }
 
 /* line 26, ../../app/stylesheets/experimenter.scss */
+#participant-column {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 230px;
+  height: 350px;
+  overflow-y: auto;
+}
+/* line 138, ../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #participant-column {
+  overflow-x: hidden;
+}
+
+/* line 33, ../../app/stylesheets/experimenter.scss */
+.participant-item.selected {
+  background: #66ccff;
+}
+
+/* line 36, ../../app/stylesheets/experimenter.scss */
+.participant-item.highlighted {
+  background: #ffcc66;
+}
+
+/* line 40, ../../app/stylesheets/experimenter.scss */
 #travel-fix-column {
   display: inline;
   float: left;
   margin-right: 10px;
-  width: 310px;
-  height: 400px;
+  width: 230px;
+  height: 350px;
   overflow-y: auto;
 }
 /* line 138, ../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
@@ -121,41 +145,41 @@ a img {
   overflow-x: hidden;
 }
 
-/* line 35, ../../app/stylesheets/experimenter.scss */
+/* line 49, ../../app/stylesheets/experimenter.scss */
 .travel-fix-item.selected {
   background: #66ccff;
 }
 
-/* line 38, ../../app/stylesheets/experimenter.scss */
+/* line 52, ../../app/stylesheets/experimenter.scss */
 .travel-fix-item.highlighted {
   background: #ffcc66;
 }
 
-/* line 42, ../../app/stylesheets/experimenter.scss */
+/* line 56, ../../app/stylesheets/experimenter.scss */
 #trip-column {
   display: inline;
   float: left;
   margin-right: 10px;
-  width: 310px;
+  width: 230px;
 }
 /* line 138, ../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
 * html #trip-column {
   overflow-x: hidden;
 }
 
-/* line 46, ../../app/stylesheets/experimenter.scss */
+/* line 60, ../../app/stylesheets/experimenter.scss */
 #activity-column {
   display: inline;
   float: left;
   margin-right: 0;
-  width: 310px;
+  width: 230px;
 }
 /* line 138, ../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
 * html #activity-column {
   overflow-x: hidden;
 }
 
-/* line 50, ../../app/stylesheets/experimenter.scss */
+/* line 64, ../../app/stylesheets/experimenter.scss */
 h1 {
   font: bold 16px Arial;
   text-align: center;
