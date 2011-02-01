@@ -1,4 +1,4 @@
-class Mobile::TravelFixesController < ApplicationController
+class TravelFixesController < ApplicationController
   # GET /travel_fixes
   # GET /travel_fixes.xml
   def index
