@@ -1,0 +1,147 @@
+!!!
+%head
+  =stylesheet_link_tag "viewer"
+  =javascript_include_tag "jquery"
+  =javascript_include_tag "json2", "underscore", "backbone", "backbone.rails"
+  =javascript_include_tag "polymaps/polymaps.js"
+  =javascript_include_tag "openlayers/OpenLayers.js"
+
+%body
+  #map
+  #user-panel.panel
+    %li Welcome <strong>#{current_participant.full_name}</strong>
+    %li <a href="#">Your details</a>
+    %li <a href="#">Help</a>
+    %li #{link_to "Sign out", destroy_participant_session_path}
+  #travel-panel.panel
+    #fixes-placard.placard
+      .number x
+      .title fixes
+    #trips-placard.placard
+      .number x
+      .title trips
+    #activities-placard.placard
+      .number x
+      .title activities
+    
+  :javascript
+    var po = org.polymaps;
+    
+    var map = po.map()
+        .container(document.getElementById("map").appendChild(po.svg("svg")))
+        .add(po.interact())
+        .add(po.hash());
+        
+    map.add(po.image()
+        .url(po.url("http://{S}tile.cloudmade.com"
+        + "/7edf224d2b714c238a8ed621091d63bc"
+        + "/998/256/{Z}/{X}/{Y}.png")
+        .hosts(["a.", "b.", "c.", ""])));
+        
+    map.add(po.compass()
+        .pan("none"));
+        
+        // http://raphaeljs.com/icons/
+    var icons = (function(po) {
+      return {
+        marker: function() {
+          var path = po.svg("path");
+          path.setAttribute("transform", "translate(-16,-28)");
+          path.setAttribute("d", "M24.778,21.419 19.276,15.917 24.777,10.415 21.949,7.585 16.447,13.087 10.945,7.585 8.117,10.415 13.618,15.917 8.116,21.419 10.946,24.248 16.447,18.746 21.948,24.248");
+          return path;
+        }
+      };
+    })(org.polymaps);
+    
+    var travelFixLayer;
+    function loadTravelFixes(e) { 
+      for (var i = 0; i < e.features.length; i++) {
+        var f = e.features[i],
+            c = f.element,
+            g = f.element = po.svg("g");
+            
+        /* landmark icon */
+        g.appendChild(icons.marker());
+        g.setAttribute("transform", c.getAttribute("transform") + ", scale(3.0)");
+        c.parentNode.replaceChild(g, c);
+        f.element.setAttribute('id', 'travel-fix-icon-' + f.data.id);
+        f.element.appendChild(po.svg("id")
+         .appendChild(document.createTextNode(f.data.id))
+         .parentNode);
+      }
+    }
+    
+    var maxExtent = new OpenLayers.Bounds();
+    function zoomToTravelFixes() {
+      var swLat, swLong, neLat, neLon;
+      
+      _.each(travelFixes.models, function(l) {
+        maxExtent.extend(new OpenLayers.LonLat(l.attributes.longitude, l.attributes.latitude));
+      });
+      
+      map.extent([{lat: maxExtent.bottom, lon: maxExtent.left}, {lat: maxExtent.top, lon: maxExtent.right}]);
+    }
+    
+  :javascript
+    /* MODELS */
+    window.TravelFix = Backbone.Model.extend({
+      name: 'travel_fix'
+    });
+    
+    /* COLLECTIONS */
+    window.TravelFixes = Backbone.Collection.extend({
+      name: 'travel_fixes',
+      model: TravelFix,
+      url: '/api/participants/#{current_participant.id}/travel_fixes.json',
+      geojson: function() {
+        var geojson = [];
+        _.each(travelFixes.models, function(l) {
+          geojson.push({ 
+            id: l.attributes.id,
+            geometry: {
+              type: "Point",
+              coordinates: [parseFloat(l.attributes.longitude), parseFloat(l.attributes.latitude)]
+            }, 
+            properties: {
+              // name: l.attributes.name
+            }
+          });
+        });
+        return geojson;
+      }
+    });
+    
+    window.travelFixes = new TravelFixes;
+    
+    /* VIEWS */
+    window.TravelFixesPlacard = Backbone.View.extend({
+      id: 'fixes-placard',
+      initialize: function() {
+        travelFixes.bind('refresh', this.render);
+      },
+      render: function() {
+        $('#fixes-placard .number').text(travelFixes.length);
+        if (travelFixes.length == 1) $('#fixes-placard .title').text('fix');
+      } 
+    });
+    window.TravelFixLayerView = Backbone.View.extend({
+      initialize: function() {
+        travelFixes.bind('refresh', this.render);
+      },
+      render: function() {
+        if (travelFixLayer) map.remove(travelFixLayer);
+        travelFixLayer = po.geoJson()
+                           .features(travelFixes.geojson())
+                           .on("load", loadTravelFixes)
+                           .id("travel-fix-layer")
+                           .scale("fixed");
+        map.add(travelFixLayer);
+        zoomToTravelFixes();
+      }
+    });
+    
+    window.travelFixesPlacard = new TravelFixesPlacard;
+    window.travelFixLayerView = new TravelFixLayerView;
+    
+    /* LOAD DATA */    
+    travelFixes.fetch();
