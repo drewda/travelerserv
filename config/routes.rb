@@ -12,6 +12,7 @@ Travelerserv::Application.routes.draw do
   namespace :mobile do
     resources :travel_fixes
     match 'survey_trigger' => 'survey#trigger'
+    match 'survey_call/:participant_id' => 'survey#call'
   end
   
   namespace :experimenter do

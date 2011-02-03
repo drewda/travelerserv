@@ -20,9 +20,9 @@ class Mobile::SurveyController < ApplicationController
       d = {
           'From' => CALLER_ID,
           'To' => @device.participant.cell_number,
-          'Body' => 'It is survey time!',
+          'Url' => 'http://geocog.geog.ucsb.edu:3001/mobile/survey_call/#{@device.participant.id}'
       }
-      resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/SMS/Messages", 'POST', d)
+      resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/Calls", 'POST', d)
       resp.error! unless resp.kind_of? Net::HTTPSuccess
     rescue StandardError => bang
       render :text => "<strong>Error #{ bang }</strong> <p>#{resp.body}</p>"
@@ -33,5 +33,9 @@ class Mobile::SurveyController < ApplicationController
       format.html { render :text => 'ok' } 
       format.xml  { head :ok }
     end
+  end
+  
+  def survey_call
+    
   end
 end
