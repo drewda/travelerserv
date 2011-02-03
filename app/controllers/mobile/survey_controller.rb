@@ -20,7 +20,7 @@ class Mobile::SurveyController < ApplicationController
       d = {
           'From' => CALLER_ID,
           'To' => @device.participant.cell_number,
-          'Url' => 'http://geocog.geog.ucsb.edu:3001/mobile/survey_call/#{@device.participant.id}'
+          'Url' => "http://geocog.geog.ucsb.edu:3001/mobile/survey_call/#{@device.participant.id}.xml"
       }
       resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/Calls", 'POST', d)
       resp.error! unless resp.kind_of? Net::HTTPSuccess
@@ -35,7 +35,7 @@ class Mobile::SurveyController < ApplicationController
     end
   end
   
-  def survey_call
-    
+  def call
+    @participant = Participant.find(params[:participant_id])
   end
 end
