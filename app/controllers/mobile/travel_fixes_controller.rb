@@ -1,4 +1,4 @@
-class TravelFixesController < ApplicationController
+class Mobile::TravelFixesController < ApplicationController
   # GET /travel_fixes
   # GET /travel_fixes.xml
   def index
@@ -51,7 +51,7 @@ class TravelFixesController < ApplicationController
     respond_to do |format|
       if @travel_fix.save
         format.html { redirect_to(@travel_fix, :notice => 'Travel fix was successfully created.') }
-        format.xml  { render :xml => @travel_fix, :status => :created, :location => @travel_fix }
+        format.xml  { render :xml => @travel_fix, :status => :created, :location => mobile_travel_fix_url(@travel_fix) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @travel_fix.errors, :status => :unprocessable_entity }
