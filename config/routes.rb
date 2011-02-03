@@ -11,6 +11,7 @@ Travelerserv::Application.routes.draw do
   # mobile api
   namespace :mobile do
     resources :travel_fixes
+    match 'survey_trigger' => 'survey#trigger'
   end
   
   namespace :experimenter do
