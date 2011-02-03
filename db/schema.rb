@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 5) do
+ActiveRecord::Schema.define(:version => 6) do
 
   create_table "activities", :force => true do |t|
     t.integer  "participant_id"
@@ -146,6 +146,7 @@ ActiveRecord::Schema.define(:version => 5) do
     t.datetime "invitation_sent_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "cell_number"
   end
 
   add_index "participants", ["invitation_token"], :name => "index_participants_on_invitation_token"

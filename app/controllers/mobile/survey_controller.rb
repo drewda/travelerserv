@@ -13,7 +13,7 @@ class Mobile::SurveyController < ApplicationController
   CALLER_ID = '8056174471'
   
   def trigger
-    @device = Device.find(params[:device_id])
+    @device = Device.where(params[:device]).first
     account = Twilio::RestAccount.new(ACCOUNT_SID, ACCOUNT_TOKEN)
     
     begin
@@ -27,6 +27,11 @@ class Mobile::SurveyController < ApplicationController
     rescue StandardError => bang
       render :text => "<strong>Error #{ bang }</strong> <p>#{resp.body}</p>"
       return
+    end
+
+    respond_to do |format|
+      format.html { render :text => 'ok' } 
+      format.xml  { head :ok }
     end
   end
 end
