@@ -1,5 +1,5 @@
 Travelerserv::Application.routes.draw do
-  devise_for :users, :experimenters, :participants
+  devise_for :experimenters, :participants
 
   # api
   namespace :api do
