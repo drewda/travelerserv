@@ -5,7 +5,6 @@ class StudySuite < ActiveRecord::Migration
       t.string :slug
       t.string :web_site
       t.string :country
-      t.integer :primary_manager_id
       t.boolean :active
       t.string :timezone
       t.timestamps
@@ -71,10 +70,33 @@ class StudySuite < ActiveRecord::Migration
       t.string :note
       t.timestamps
     end
+    add_index :log_entries, :lab_id
+    add_index :log_entries, :participant_id
+    add_index :log_entries, :experimenter_id
     
     create_table :studies do |t|
-      # TODO
+      t.string :name
+      t.integer :lab_id
+      t.boolean :active
+      t.integer :experimenter_id
+      t.boolean :ask_participant_id
+      t.boolean :ask_name
+      t.boolean :ask_email
+      t.boolean :ask_age
+      t.boolean :ask_sex
+      t.timestamps
     end
+    add_index :studies, :lab_id
+    add_index :studies, :experimenter_id
+    
+    create_table :participant_in_studies do |t|
+      t.integer :participant_id
+      t.integer :study_id
+      t.boolean :active
+      t.boolean :complete
+    end
+    add_index :participant_in_studies, :participant_id
+    add_index :participant_in_studies, :study_id
   end
 
   def self.down
@@ -84,5 +106,6 @@ class StudySuite < ActiveRecord::Migration
     drop_table :administrators
     drop_table :log_entries
     drop_table :studies
+    drop_table :participant_in_studies
   end
 end
