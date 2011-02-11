@@ -1,5 +1,6 @@
 class Study < ActiveRecord::Base
   belongs_to :lab
+  belongs_to :experimenter
   has_many :participant_in_studies
   has_many :participants, :through => :participant_in_studies
   
