@@ -4,6 +4,7 @@ class Participant < ActiveRecord::Base
   has_many :trips
   has_many :activities
   has_many :participant_in_studies
+  has_many :studies, :through => :participant_in_studies
   has_many :questionnaire_records
   has_many :log_entries
   
