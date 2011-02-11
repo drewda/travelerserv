@@ -44,6 +44,11 @@ class Mobile::QuestionnaireController < ApplicationController
     @participant = Participant.find(params[:participant_id])    
     @questionnaire = Questionnaire.find(params[:questionnaire_id])
     
+    # by default, start with the first QuestionnaireField
+    if !@questionnaire_field
+      @questionnaire_field = @questionnaire.questionnaire_fields[0]
+    end
+    
     # create QuestionnaireRecord if not already created
     if params['questionnaire_record_id'] and QuestionnaireRecord.find(params['questionnaire_record_id'])
       @questionnaire_record = QuestionnaireRecord.find(params['questionnaire_record_id'])
@@ -60,122 +65,117 @@ class Mobile::QuestionnaireController < ApplicationController
     elsif @stage == 'entry'
       @questionnaire_field = QuestionnaireField.find(params['questionnaire_field_id'])
       response = params['Digits']
-    end
-    
-    # by default, start with the first QuestionnaireField
-    if !@questionnaire_field
-      @questionnaire_field = @questionnaire.questionnaire_fields[0]
-    end
 
-    ### ANY_INTEGER
-    if @questionnaire_field.kind == 'any_integer'
-      if response.to_s != '*' and response.to_i
-        qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
-                                              :questionnaire_field => @questionnaire_field,
-                                              :kind => 'any_integer',
-                                              :integer => response,
-                                              :skipped => false)
-        qrf.save()
-        go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-      elsif response == '*'
-        if @questionnaire_field.required == false
+      ### ANY_INTEGER
+      if @questionnaire_field.kind == 'any_integer'
+        if response.to_s != '*' and response.to_i
           qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
                                                 :questionnaire_field => @questionnaire_field,
                                                 :kind => 'any_integer',
+                                                :integer => response,
                                                 :skipped => false)
           qrf.save()
           go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-        elsif @questionnaire_field.required == true
-          @stage = 'required'
+        elsif response == '*'
+          if @questionnaire_field.required == false
+            qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
+                                                  :questionnaire_field => @questionnaire_field,
+                                                  :kind => 'any_integer',
+                                                  :skipped => false)
+            qrf.save()
+            go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
+          elsif @questionnaire_field.required == true
+            @stage = 'required'
+          end
+        else
+          @stage = 'input_error'
         end
-      else
-        @stage = 'input_error'
-      end
       
-    ### INTEGER_SCALE  
-    elsif @questionnaire_field.kind == 'integer_scale'
-      if response.to_s != '*' and 
-         response.to_i and 
-         response.to_i >= @questionnaire_field.integer_min_value and 
-         response.to_i <= @questionnaire_field.integer_max_value
-        qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
-                                             :questionnaire_field => @questionnaire_field,
-                                             :kind => 'integer_scale',
-                                             :integer => response,
-                                             :skipped => false)
-        qrf.save()
-        go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-      elsif response.to_s != '*' and 
-        response.to_i and 
-        (response.to_i < @questionnaire_field.integer_min_value or response.to_i > @questionnaire_field.integer_max_value)
-        @stage = 'input_error'
-      elsif response == '*'
-        if @questionnaire_field.required == false
+      ### INTEGER_SCALE  
+      elsif @questionnaire_field.kind == 'integer_scale'
+        if response.to_s != '*' and 
+           response.to_i and 
+           response.to_i >= @questionnaire_field.integer_min_value and 
+           response.to_i <= @questionnaire_field.integer_max_value
           qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
                                                :questionnaire_field => @questionnaire_field,
                                                :kind => 'integer_scale',
-                                               :skipped => true)
+                                               :integer => response,
+                                               :skipped => false)
           qrf.save()
           go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-        elsif @questionnaire_field.required == true
-          @stage = 'required'
+        elsif response.to_s != '*' and 
+          response.to_i and 
+          (response.to_i < @questionnaire_field.integer_min_value or response.to_i > @questionnaire_field.integer_max_value)
+          @stage = 'input_error'
+        elsif response == '*'
+          if @questionnaire_field.required == false
+            qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
+                                                 :questionnaire_field => @questionnaire_field,
+                                                 :kind => 'integer_scale',
+                                                 :skipped => true)
+            qrf.save()
+            go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
+          elsif @questionnaire_field.required == true
+            @stage = 'required'
+          end
+        else
+          @stage = 'input_error'
         end
-      else
-        @stage = 'input_error'
-      end
       
-    ### SELCT_FROM_CHOICES
-    elsif @questionnaire_field.kind == 'select_from_choices'
-      if response.to_s != '*'
-        qfc = @questionnaire_field.questionnaire_field_choices[response.to_i]
-        qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
-                                             :questionnaire_field => @questionnaire_field,
-                                             :kind => 'select_from_choices',
-                                             :questionnaire_field_choice => qfc,
-                                             :skipped => false)
-        qrf.save()
-        go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-      elsif response == '*'
-        if @questionnaire_field.required == false
+      ### SELCT_FROM_CHOICES
+      elsif @questionnaire_field.kind == 'select_from_choices'
+        if response.to_s != '*'
+          qfc = @questionnaire_field.questionnaire_field_choices[response.to_i]
           qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
                                                :questionnaire_field => @questionnaire_field,
                                                :kind => 'select_from_choices',
-                                               :skipped => true)
+                                               :questionnaire_field_choice => qfc,
+                                               :skipped => false)
           qrf.save()
           go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-        elsif @report_form_field.required == true
-          @stage = 'required'
+        elsif response == '*'
+          if @questionnaire_field.required == false
+            qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
+                                                 :questionnaire_field => @questionnaire_field,
+                                                 :kind => 'select_from_choices',
+                                                 :skipped => true)
+            qrf.save()
+            go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
+          elsif @report_form_field.required == true
+            @stage = 'required'
+          end
+        else
+          @stage = 'input_error'
         end
-      else
-        @stage = 'input_error'
-      end
       
-    ### TEXT_FIELD
-    elsif @questionnaire_field.kind == 'text_field'
-      if response.to_s != '*'
-        audio_url = params['RecordingUrl'].to_s + ".mp3"
-        sc = SpeechClip.create(:audio_url => audio_url)
-        sc.save()
-        qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
-                                             :questionnaire_field => @questionnaire_field,
-                                             :kind => 'text_field',
-                                             :speech_clip => sc,
-                                             :skipped => false)
-        qrf.save()
-        go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-      elsif response == '*'
-        if @report_form_field.required == false
+      ### TEXT_FIELD
+      elsif @questionnaire_field.kind == 'text_field'
+        if response.to_s != '*'
+          audio_url = params['RecordingUrl'].to_s + ".mp3"
+          sc = SpeechClip.create(:audio_url => audio_url)
+          sc.save()
           qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
                                                :questionnaire_field => @questionnaire_field,
                                                :kind => 'text_field',
-                                               :skipped => true)
+                                               :speech_clip => sc,
+                                               :skipped => false)
           qrf.save()
           go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
-        elsif @report_form_field.required == true
-          @stage = 'required'
+        elsif response == '*'
+          if @report_form_field.required == false
+            qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
+                                                 :questionnaire_field => @questionnaire_field,
+                                                 :kind => 'text_field',
+                                                 :skipped => true)
+            qrf.save()
+            go_to_next_or_finish(@participant, @questionnaire, @questionnaire_field, @questionnaire_record)
+          elsif @report_form_field.required == true
+            @stage = 'required'
+          end
+        else
+          @stage = 'input_error'
         end
-      else
-        @stage = 'input_error'
       end
     end
 
