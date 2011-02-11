@@ -22,13 +22,10 @@
     - elsif @questionnaire_field.kind == 'integer_scale'
       - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
       - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
-      - if (@questionnaire_field.integer_min_value < 10) and (@questionnaire_field.integer_max_value < 10)
-        maxDigits = 1
-      - else
-        maxDigits = ""
-      %Gather(action=url method="post" maxDigits=maxDigits)
+      - numDigits = Math.log10(@questionnaire_field.integer_max_value).ceil
+      %Gather(action=url method="post" numDigits=numDigits)
         %Say #{@questionnaire_field.question_text}. Enter a number that is between #{@questionnaire_field.integer_min_value} and #{@questionnaire_field.integer_max_value}.
-        - if maxDigits != 1
+        - if numDigits != 1
           %Say Then press the pound key.
         - if @questionnaire_field.required == false
           %Say or to skip, press the star key followed by the pound key
@@ -41,14 +38,8 @@
       - if @questionnaire_field.questionnaire_field_choices.length == 0
         %Say Error. There are no choices to select from.          
       - else
-        - if @questionnaire_field.questionnaire_field_choices.length >= 1 and @questionnaire_field.questionnaire_field_choices.length <= 10
-          - maxDigits = 1
-        - elsif @questionnaire_field.questionnaire_field_choices.length < 100
-          - maxDigits = 2
-        - elsif @questionnaire_field.questionnaire_field_choices.length >= 100
-          %Say Error. There are 100 or more options. That's too many to read to you over the phone.
-          - break
-        %Say= @report_form_field.question_text
+        - numDigits = Math.log10(@questionnaire_field.questionnaire_field_choices.length).ceil
+        %Say= @questionnaire_field.question_text
         %Gather(action=url method="post" numDigits=numDigits)
           - @questionnaire_field.questionnaire_field_choices.each_with_index do |choice, index|
             %Say Press #{index} 

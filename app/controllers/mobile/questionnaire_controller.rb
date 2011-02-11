@@ -13,25 +13,31 @@ class Mobile::QuestionnaireController < ApplicationController
   CALLER_ID = '8056174471'
   
   def trigger
-    @device = Device.where(params[:device]).first
-    account = Twilio::RestAccount.new(ACCOUNT_SID, ACCOUNT_TOKEN)
-    
-    begin
-      d = {
-          'From' => CALLER_ID,
-          'To' => @device.participant.cell_number,
-          'Url' => "http://geocog.geog.ucsb.edu:3001/mobile/questionnaire_call/init.xml?participant_id=#{@device.participant.id}&questionnaire_id=#{@device.participant.participant_in_studies.where(:active=>true)[0].study.start_trip_questionnaire.id}"
-      }
-      resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/Calls", 'POST', d)
-      resp.error! unless resp.kind_of? Net::HTTPSuccess
-    rescue StandardError => bang
-      render :text => "<strong>Error #{ bang }</strong> <p>#{resp.body}</p>"
-      return
-    end
+    if !params[:device]
+      render :text => "specify device identification"
+      
+    else
+      @device = Device.where(params[:device]).first
 
-    respond_to do |format|
-      format.html { render :text => 'ok' } 
-      format.xml  { head :ok }
+      account = Twilio::RestAccount.new(ACCOUNT_SID, ACCOUNT_TOKEN)
+    
+      begin
+        d = {
+            'From' => CALLER_ID,
+            'To' => @device.participant.cell_number,
+            'Url' => "http://geocog.geog.ucsb.edu:3001/mobile/questionnaire_call/init.xml?participant_id=#{@device.participant.id}&questionnaire_id=#{@device.participant.participant_in_studies.where(:active=>true)[0].study.start_trip_questionnaire.id}"
+        }
+        resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/Calls", 'POST', d)
+        resp.error! unless resp.kind_of? Net::HTTPSuccess
+      rescue StandardError => bang
+        render :text => "<strong>Error #{ bang }</strong> <p>#{resp.body}</p>"
+        return
+      end
+
+      respond_to do |format|
+        format.html { render :text => 'ok' } 
+        format.xml  { head :ok }
+      end
     end
   end
   
@@ -45,8 +51,10 @@ class Mobile::QuestionnaireController < ApplicationController
     @questionnaire = Questionnaire.find(params[:questionnaire_id])
     
     # by default, start with the first QuestionnaireField
-    if !@questionnaire_field
+    if !params[:questionnaire_field_id]
       @questionnaire_field = @questionnaire.questionnaire_fields[0]
+    else
+      @questionnaire_field = QuestionnaireField.find(params[:questionnaire_field_id])
     end
     
     # create QuestionnaireRecord if not already created
@@ -61,9 +69,9 @@ class Mobile::QuestionnaireController < ApplicationController
 
     @stage = params["stage"].to_s
     if @stage == 'repeat'
-      @questionnaire_field = QuestionnaireField.find(params['questionnaire_field_id'])
+      @questionnaire_field = QuestionnaireField.find(params[:questionnaire_field_id])
     elsif @stage == 'entry'
-      @questionnaire_field = QuestionnaireField.find(params['questionnaire_field_id'])
+      @questionnaire_field = QuestionnaireField.find(params[:questionnaire_field_id])
       response = params['Digits']
 
       ### ANY_INTEGER
@@ -153,7 +161,7 @@ class Mobile::QuestionnaireController < ApplicationController
       elsif @questionnaire_field.kind == 'text_field'
         if response.to_s != '*'
           audio_url = params['RecordingUrl'].to_s + ".mp3"
-          sc = SpeechClip.create(:audio_url => audio_url)
+          sc = SpeechClip.create(:audio_original_url => audio_url)
           sc.save()
           qrf = QuestionnaireRecordField.create(:questionnaire_record => @questionnaire_record,
                                                :questionnaire_field => @questionnaire_field,
@@ -185,8 +193,8 @@ class Mobile::QuestionnaireController < ApplicationController
   end
 
   def go_to_next_or_finish(participant, questionnaire, questionnaire_field, questionnaire_record)
-    if questionnaire.questionnaire_fields.where(:order => (questionnaire_field.order + 1)).first
-      redirect_to mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :questionnaire_field_id => questionnaire_field.order + 1, :questionnaire_record_id => questionnaire_record.id)
+    if next_questionnaire_field = questionnaire.questionnaire_fields.where(:order => (questionnaire_field.order + 1)).first
+      redirect_to mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => questionnaire.id, :questionnaire_field_id => next_questionnaire_field.id, :questionnaire_record_id => questionnaire_record.id)
     else
       qr = questionnaire_record
       qr.filed_at = Time.now

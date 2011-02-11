@@ -1,6 +1,6 @@
 class Questionnaire < ActiveRecord::Base
   belongs_to :lab
-  has_many :questionnaire_fields
+  has_many :questionnaire_fields, :order => "questionnaire_fields.order ASC"
   has_many :questionnaire_records
   has_many :questionnaire_in_studies  
   has_and_belongs_to_many :image_files
