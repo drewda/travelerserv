@@ -185,8 +185,8 @@ class Mobile::QuestionnaireController < ApplicationController
   end
 
   def go_to_next_or_finish(participant, questionnaire, questionnaire_field, questionnaire_record)
-    if next_questionnaire_field = questionnaire.questionnaire_fields.where(:order => (questionnaire_field.order + 1)).first
-      @questionnaire_field = next_questionnaire_field
+    if questionnaire.questionnaire_fields.where(:order => (questionnaire_field.order + 1)).first
+      redirect_to mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :questionnaire_field_id => questionnaire_field.order + 1, :questionnaire_record_id => questionnaire_record.id)
     else
       qr = questionnaire_record
       qr.filed_at = Time.now
