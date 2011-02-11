@@ -5,6 +5,7 @@ class Participant < ActiveRecord::Base
   has_many :activities
   has_many :participant_in_studies
   has_many :questionnaire_records
+  has_many :log_entries
   
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
   

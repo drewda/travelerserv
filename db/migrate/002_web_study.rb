@@ -8,7 +8,6 @@ class WebStudy < ActiveRecord::Migration
       t.string :name
       t.integer :lab_id
       t.boolean :active
-      t.integer :order
       t.timestamps
     end
     add_index :questionnaires, :lab_id

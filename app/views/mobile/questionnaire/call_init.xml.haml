@@ -1,0 +1,4 @@
+!!!XML
+%Response
+     %Say Hello #{@participant.full_name}. This is the Traveler system calling. Please complete a quick survey.
+     %Redirect= mobile_questionnaire_call_step_through_questionnaire_path(:participant_id => @participant.id, :questionnaire_id => @questionnaire.id)

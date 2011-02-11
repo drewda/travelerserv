@@ -1,0 +1,74 @@
+!!! XML
+%Response
+  - if @stage == 'finished'
+    %Say You have completed the #{@questionnaire.name} questionnaire.
+    %Say Goodbye.
+  - elsif @stage == 'required'
+    %Say It is required that you complete this question.
+  - elsif @stage == 'input_error'
+    %Say That is invald input. Please try again.
+  
+  - if @stage == '' or @stage == 'repeat' or @stage == 'required' or @stage == 'next_questionnaire_field' or @stage == 'input_error'
+    -# ANY INTEGER
+    - if @questionnaire_field.kind == 'any_integer'
+      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
+      %Gather(action=url method="post")
+        %Say #{@questionnaire_field.question_text}. Enter a number and press the pound key
+        - if @questionnaire_field.required == false
+          %Say or to skip, press the star key followed by the pound key
+      - url.gsub('stage=entry', 'stage=repeat')
+      %Redirect= url
+    - elsif @questionnaire_field.kind == 'integer_scale'
+      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
+      - if (@questionnaire_field.integer_min_value < 10) and (@questionnaire_field.integer_max_value < 10)
+        maxDigits = 1
+      - else
+        maxDigits = ""
+      %Gather(action=url method="post" maxDigits=maxDigits)
+        %Say #{@questionnaire_field.question_text}. Enter a number that is between #{@questionnaire_field.integer_min_value} and #{@questionnaire_field.integer_max_value}.
+        - if maxDigits != 1
+          %Say Then press the pound key.
+        - if @questionnaire_field.required == false
+          %Say or to skip, press the star key followed by the pound key
+      - url.gsub('stage=entry', 'stage=repeat')
+      %Redirect= url
+    - elsif @questionnaire_field.kind == 'select_from_choices'
+      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
+      
+      - if @questionnaire_field.questionnaire_field_choices.length == 0
+        %Say Error. There are no choices to select from.          
+      - else
+        - if @questionnaire_field.questionnaire_field_choices.length >= 1 and @questionnaire_field.questionnaire_field_choices.length <= 10
+          - maxDigits = 1
+        - elsif @questionnaire_field.questionnaire_field_choices.length < 100
+          - maxDigits = 2
+        - elsif @questionnaire_field.questionnaire_field_choices.length >= 100
+          %Say Error. There are 100 or more options. That's too many to read to you over the phone.
+          - break
+        %Say= @report_form_field.question_text
+        %Gather(action=url method="post" numDigits=numDigits)
+          - @questionnaire_field.questionnaire_field_choices.each_with_index do |choice, index|
+            %Say Press #{index} 
+            - if numDigits == 1
+            - elsif (numDigits == 2) and (index < 10)
+              %Say pound
+            - elsif (numDigits == 2) and (index >= 10)
+            %Say for #{choice.text}.
+          - if @questionnaire_field.required == false
+            %Say or to skip, press the star key
+            - if numDigits > 1
+            %Say followed by the pound key
+        - url.gsub('stage=entry', 'stage=repeat')
+        %Redirect= url
+    - if @questionnaire_field.kind == 'text_field'
+      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
+      %Say #{@questionnaire_field.question_text}. Say your response after the beep. Press pound sign when you are finished talking."
+      - if @questionnaire_field.required == false
+        %Say or to skip, press the star key followed by the pound key
+      %Record(action=url method="post" maxLength="#{@questionnaire_field.speech_clip_max_seconds}" transcribe="false" transcribeCallback="")
+      - url.gsub('stage=entry', 'stage=repeat')
+      %Redirect= url

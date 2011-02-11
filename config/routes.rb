@@ -11,8 +11,9 @@ Travelerserv::Application.routes.draw do
   # mobile api
   namespace :mobile do
     resources :travel_fixes
-    match 'survey_trigger' => 'survey#trigger'
-    match 'survey_call/:participant_id' => 'survey#call'
+    match 'questionnaire_trigger' => 'questionnaire#trigger'
+    match 'questionnaire_call/init' => 'questionnaire#call_init'
+    match 'questionnaire_call/step_through_questionnaire/' => 'questionnaire#step_through_questionnaire', :as => "questionnaire_call_step_through_questionnaire"
   end
   
   namespace :experimenter do

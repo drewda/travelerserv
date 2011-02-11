@@ -258,7 +258,6 @@ ActiveRecord::Schema.define(:version => 4) do
     t.string   "name"
     t.integer  "lab_id"
     t.boolean  "active"
-    t.integer  "order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
