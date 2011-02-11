@@ -4,4 +4,9 @@ class Experimenter < ActiveRecord::Base
   has_many :studies
   
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
+  
+  # for rails_admin
+  def title
+    self.full_name
+  end
 end
