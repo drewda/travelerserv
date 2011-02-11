@@ -5,6 +5,10 @@ class Experimenter < ActiveRecord::Base
   
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
   
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+  
   # for rails_admin
   def title
     self.full_name
