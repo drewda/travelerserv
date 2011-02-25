@@ -166,10 +166,19 @@ a:hover {
 /* MAP */
 /* line 156, ../../app/stylesheets/viewer.scss */
 #travel-fix-layer path {
-  fill: #ab53de;
+  fill: #8293ED;
+  stroke: #fff;
+  stroke-width: 1px;
 }
 
-/* line 159, ../../app/stylesheets/viewer.scss */
+/* line 161, ../../app/stylesheets/viewer.scss */
 #travel-fix-layer path:hover {
-  fill: #ccc;
+  fill: #fff;
+  stroke: #8293ED;
+  stroke-width: 2px;
+}
+
+/* line 166, ../../app/stylesheets/viewer.scss */
+#travel-fix-layer text {
+  fill: #8293ED;
 }

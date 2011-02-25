@@ -25,6 +25,31 @@
       .title activities
     
   :javascript
+    // http://www.elated.com/articles/working-with-dates/
+    var month_names = new Array ( );
+    month_names[month_names.length] = "January";
+    month_names[month_names.length] = "February";
+    month_names[month_names.length] = "March";
+    month_names[month_names.length] = "April";
+    month_names[month_names.length] = "May";
+    month_names[month_names.length] = "June";
+    month_names[month_names.length] = "July";
+    month_names[month_names.length] = "August";
+    month_names[month_names.length] = "September";
+    month_names[month_names.length] = "October";
+    month_names[month_names.length] = "November";
+    month_names[month_names.length] = "December";
+
+    var day_names = new Array ( );
+    day_names[day_names.length] = "Sunday";
+    day_names[day_names.length] = "Monday";
+    day_names[day_names.length] = "Tuesday";
+    day_names[day_names.length] = "Wednesday";
+    day_names[day_names.length] = "Thursday";
+    day_names[day_names.length] = "Friday";
+    day_names[day_names.length] = "Saturday";
+    
+  :javascript
     var po = org.polymaps;
     
     var map = po.map()
@@ -54,22 +79,31 @@
     })(org.polymaps);
     
     var travelFixLayer;
-    function loadTravelFixes(e) { 
+    function loadTravelFixes(e) {
       for (var i = 0; i < e.features.length; i++) {
         var f = e.features[i],
             c = f.element,
             g = f.element = po.svg("g");
-            
-        /* landmark icon */
+      
+        /* fix icon */
         g.appendChild(icons.marker());
-        g.setAttribute("transform", c.getAttribute("transform") + ", scale(3.0)");
+        g.setAttribute("transform", c.getAttribute("transform") + ", scale(0.8)");
         c.parentNode.replaceChild(g, c);
-        f.element.setAttribute('id', 'travel-fix-icon-' + f.data.id);
+        f.element.setAttribute('id', 'fix-icon-' + f.data.id);
         f.element.appendChild(po.svg("id")
          .appendChild(document.createTextNode(f.data.id))
          .parentNode);
+       
+         $(f.element).hover(function(event) {
+           id = $('id', event.currentTarget).text();
+           travelFixes.get(id).set({mouseover: true});
+         }, function(event) {
+           id = $('id', event.currentTarget).text();
+           travelFixes.get(id).set({mouseover: false});
+         });
       }
     }
+    
     
     var maxExtent = new OpenLayers.Bounds();
     function zoomToTravelFixes() {
@@ -85,7 +119,12 @@
   :javascript
     /* MODELS */
     window.TravelFix = Backbone.Model.extend({
-      name: 'travel_fix'
+      name: 'travel_fix',
+      initialize: function() {
+        this.bind("change", function(m) {
+          console.log('fix-' + m.id + ': ' + JSON.stringify(m.changedAttributes()));
+        });
+      },
     });
     
     /* COLLECTIONS */
@@ -127,6 +166,7 @@
     window.TravelFixLayerView = Backbone.View.extend({
       initialize: function() {
         travelFixes.bind('refresh', this.render);
+        travelFixes.bind('change', this.change);
       },
       render: function() {
         if (travelFixLayer) map.remove(travelFixLayer);
@@ -137,6 +177,19 @@
                            .scale("fixed");
         map.add(travelFixLayer);
         zoomToTravelFixes();
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover == true) {
+          var fixLabel = po.svg('text');
+          $(fixLabel).attr('id', 'fix-label-' + m.id);
+          fixLabel.setAttribute('transform', 'scale(2.0) translate(8 -2)');
+          var date = new Date(m.get('created_at'));
+          $(fixLabel).text(day_names[date.getDay()] + ', ' + month_names[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes());
+          $('#fix-icon-' + m.id).append(fixLabel);
+        }
+        else if (m.changedAttributes().mouseover == false) {
+          $('#fix-label-' + m.id).remove();
+        }
       }
     });
     

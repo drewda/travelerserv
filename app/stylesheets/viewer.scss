@@ -154,8 +154,15 @@ a:hover {
 
 /* MAP */
 #travel-fix-layer path {
-  fill: #ab53de;
+  fill: #8293ED;
+  stroke: #fff;
+  stroke-width: 1px;
 }
 #travel-fix-layer path:hover {
-  fill: #ccc;
+  fill: #fff;
+  stroke: #8293ED;
+  stroke-width: 2px;
+}
+#travel-fix-layer text {
+  fill: #8293ED;
 }
