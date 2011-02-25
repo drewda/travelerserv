@@ -16,3 +16,9 @@ gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
 
 gem 'compass'
 gem 'haml'
+
+gem 'railroad'
+
+gem 'eventmachine'
+gem 'rest_client'
+gem 'daemons'
