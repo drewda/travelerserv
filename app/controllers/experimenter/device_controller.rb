@@ -21,7 +21,7 @@ class Experimenter::DeviceController < ApplicationController
       d = {
           'From' => CALLER_ID,
           'To' => @device.phone_number,
-          'Body' => 'AT+GTSRI=gl100,1,2,wap.cingular,,,128.111.106.226,3000,+16503077748,20081106160119',
+          'Body' => 'AT+GTSRI=gl100,1,2,wap.cingular,,,128.111.73.56,3000,+16503077748,20081106160119',
       }
       resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/SMS/Messages", 'POST', d)
       resp.error! unless resp.kind_of? Net::HTTPSuccess
