@@ -20,5 +20,5 @@ gem 'haml'
 gem 'railroad'
 
 gem 'eventmachine'
-gem 'rest_client'
+gem 'rest-client'
 gem 'daemons'
