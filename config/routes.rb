@@ -9,8 +9,10 @@ Travelerserv::Application.routes.draw do
   end
 
   # mobile api
-  namespace :mobile do
+  namespace :enduro do
     resources :travel_fixes
+  end
+  namespace :mobile do
     match 'questionnaire_trigger' => 'questionnaire#trigger'
     match 'questionnaire_call/init' => 'questionnaire#call_init'
     match 'questionnaire_call/step_through_questionnaire/' => 'questionnaire#step_through_questionnaire', :as => "questionnaire_call_step_through_questionnaire"
