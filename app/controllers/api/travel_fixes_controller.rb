@@ -1,5 +1,5 @@
 class Api::TravelFixesController < ApplicationController
-  ActiveRecord::Base.include_root_in_json = false
+  # ActiveRecord::Base.include_root_in_json = false
     
   def index
     @travel_fixes = Participant.find(params[:participant_id]).travel_fixes

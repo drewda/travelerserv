@@ -1,5 +1,5 @@
 class Api::ParticipantsController < ApplicationController
-  ActiveRecord::Base.include_root_in_json = false
+  # ActiveRecord::Base.include_root_in_json = false
 
   def index
     @participants = Participant.all

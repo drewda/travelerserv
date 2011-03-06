@@ -9,7 +9,7 @@ class Mobile::Android::ParticipantsController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @participants }
-      format.json { render :json => @participants.to_json(:methods=>[:distance_traveled]) }
+      format.json { render :json => @participants }
     end
   end
 end

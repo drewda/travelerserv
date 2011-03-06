@@ -120,7 +120,8 @@
     /* MODELS */
     window.TravelFix = Backbone.Model.extend({
       name: 'travel_fix',
-      initialize: function() {
+      initialize: function(args) {
+        this.maybeUnwrap(args); // see note at https://gist.github.com/719080
         this.bind("change", function(m) {
           // console.log('fix-' + m.id + ': ' + JSON.stringify(m.changedAttributes()));
         });
@@ -129,7 +130,6 @@
     
     /* COLLECTIONS */
     window.TravelFixes = Backbone.Collection.extend({
-      name: 'travel_fixes',
       model: TravelFix,
       url: '/api/participants/#{current_participant.id}/travel_fixes.json',
       geojson: function() {
