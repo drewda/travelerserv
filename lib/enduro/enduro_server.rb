@@ -17,7 +17,7 @@ module GeoTransServer
       lon = data[10]
       lat = data[11]
       if lon != 0 and lat != 0 
-        RestClient.post 'http://traveler.cocogeo.com/enduro/travel_fixes', 
+        RestClient.post 'http://traveler.cocogeo.com/mobile/enduro/travel_fixes', 
                         'travel_fix[longitude]' => lon,
                         'travel_fix[latitude]' => lat,
                         'device[identification]' => imei
@@ -25,7 +25,7 @@ module GeoTransServer
       end
     elsif data[0] == '+RESP:GTSOS'
       imei = data[1]
-      RestClient.post 'http://traveler.cocogeo.com/enduro/questionnaire_trigger',
+      RestClient.post 'http://traveler.cocogeo.com/mobile/enduro/questionnaire_trigger',
                       'device[identification]' => imei
       puts 'survey triggered'
     end
