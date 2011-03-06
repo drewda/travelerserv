@@ -1,13 +1,10 @@
-class Mobile::QuestionnaireController < ApplicationController
+class Mobile::Ivr::QuestionnaireController < ApplicationController
   # your Twilio authentication credentials
   ACCOUNT_SID = 'AC6f5cc3da8ccabab8a32f4b2867246b9c'
   ACCOUNT_TOKEN = 'bb63b8db82de9fca4622def988cc5286'
 
   # version of the Twilio REST API to use
   API_VERSION = '2010-04-01'
-
-  # base URL of this application
-  BASE_URL = "http://demo.twilio.com/appointmentreminder"
 
   # Outgoing Caller ID you have previously validated with Twilio
   CALLER_ID = '8056174471'
@@ -25,7 +22,7 @@ class Mobile::QuestionnaireController < ApplicationController
         d = {
             'From' => CALLER_ID,
             'To' => @device.participant.cell_number,
-            'Url' => "http://geocog.geog.ucsb.edu:3001/mobile/questionnaire_call/init.xml?participant_id=#{@device.participant.id}&questionnaire_id=#{@device.participant.participant_in_studies.where(:active=>true)[0].study.start_trip_questionnaire.id}"
+            'Url' => "http://traveler.cocogeo.com/mobile/ivr/questionnaire_call/init.xml?participant_id=#{@device.participant.id}&questionnaire_id=#{@device.participant.participant_in_studies.where(:active=>true)[0].study.start_trip_questionnaire.id}"
         }
         resp = account.request("/#{API_VERSION}/Accounts/#{ACCOUNT_SID}/Calls", 'POST', d)
         resp.error! unless resp.kind_of? Net::HTTPSuccess
@@ -194,7 +191,7 @@ class Mobile::QuestionnaireController < ApplicationController
 
   def go_to_next_or_finish(participant, questionnaire, questionnaire_field, questionnaire_record)
     if next_questionnaire_field = questionnaire.questionnaire_fields.where(:order => (questionnaire_field.order + 1)).first
-      redirect_to mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => questionnaire.id, :questionnaire_field_id => next_questionnaire_field.id, :questionnaire_record_id => questionnaire_record.id)
+      redirect_to mobile_ivr_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => questionnaire.id, :questionnaire_field_id => next_questionnaire_field.id, :questionnaire_record_id => questionnaire_record.id)
     else
       qr = questionnaire_record
       qr.filed_at = Time.now

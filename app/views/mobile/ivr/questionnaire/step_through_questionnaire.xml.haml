@@ -11,7 +11,7 @@
   - if @stage == '' or @stage == 'repeat' or @stage == 'required' or @stage == 'next_questionnaire_field' or @stage == 'input_error'
     -# ANY INTEGER
     - if @questionnaire_field.kind == 'any_integer'
-      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url = mobile_ivr_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
       - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
       %Gather(action=url method="post")
         %Say #{@questionnaire_field.question_text}. Enter a number and press the pound key
@@ -20,7 +20,7 @@
       - url.gsub('stage=entry', 'stage=repeat')
       %Redirect= url
     - elsif @questionnaire_field.kind == 'integer_scale'
-      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url = mobile_ivr_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
       - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
       - numDigits = Math.log10(@questionnaire_field.integer_max_value).ceil
       %Gather(action=url method="post" numDigits=numDigits)
@@ -32,7 +32,7 @@
       - url.gsub('stage=entry', 'stage=repeat')
       %Redirect= url
     - elsif @questionnaire_field.kind == 'select_from_choices'
-      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url = mobile_ivr_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
       - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
       
       - if @questionnaire_field.questionnaire_field_choices.length == 0
@@ -55,7 +55,7 @@
         - url.gsub('stage=entry', 'stage=repeat')
         %Redirect= url
     - if @questionnaire_field.kind == 'text_field'
-      - url = mobile_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
+      - url = mobile_ivr_questionnaire_call_step_through_questionnaire_path(:format => 'xml', :participant_id => @participant.id, :questionnaire_id => @questionnaire.id, :stage => 'entry', :questionnaire_field_id => @questionnaire_field.id)
       - url += "&questionnaire_record_id=#{@questionnaire_record.id}" if @questionnaire_record
       %Say #{@questionnaire_field.question_text}. Say your response after the beep. Press pound sign when you are finished talking."
       - if @questionnaire_field.required == false

@@ -8,14 +8,22 @@ Travelerserv::Application.routes.draw do
     end
   end
 
-  # mobile api
-  namespace :enduro do
-    resources :travel_fixes
-  end
+  # mobile api's
   namespace :mobile do
-    match 'questionnaire_trigger' => 'questionnaire#trigger'
-    match 'questionnaire_call/init' => 'questionnaire#call_init'
-    match 'questionnaire_call/step_through_questionnaire/' => 'questionnaire#step_through_questionnaire', :as => "questionnaire_call_step_through_questionnaire"
+    namespace :enduro do
+      resources :travel_fixes
+    end
+    
+    namespace :android do
+      resources :participants
+      resources :travel_fixes
+    end
+    
+    namespace :ivr do
+      match 'questionnaire_trigger' => 'questionnaire#trigger'
+      match 'questionnaire_call/init' => 'questionnaire#call_init'
+      match 'questionnaire_call/step_through_questionnaire/' => 'questionnaire#step_through_questionnaire', :as => "questionnaire_call_step_through_questionnaire"
+    end
   end
   
   namespace :experimenter do
