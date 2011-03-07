@@ -18,7 +18,7 @@ class Mobile::Android::TravelFixesController < ApplicationController
       @travel_fix.device = @device
     else
       @device = Device.create(:lab => current_participant.lab, 
-                              :participant => current_participant
+                              :participant => current_participant,
                               :identification => params[:device][:identification],
                               :kind => params[:device][:kind],
                               :name => params[:device][:name],
