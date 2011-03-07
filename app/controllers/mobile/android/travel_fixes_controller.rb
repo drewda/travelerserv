@@ -29,8 +29,8 @@ class Mobile::Android::TravelFixesController < ApplicationController
 
     respond_to do |format|
       if @travel_fix.save
-        format.xml   { render :xml => @travel_fix, :status => :created, :location => mobile_travel_fix_url(@travel_fix) }
-        format.json  { render :json => @travel_fix, :status => :created, :location => mobile_travel_fix_url(@travel_fix) }
+        format.xml   { render :xml => @travel_fix, :status => :created, :location => mobile_android_travel_fix_url(@travel_fix) }
+        format.json  { render :json => @travel_fix, :status => :created, :location => mobile_android_travel_fix_url(@travel_fix) }
       else
         format.xml   { render :xml => @travel_fix.errors, :status => :unprocessable_entity }
         format.json  { render :json => @travel_fix.errors, :status => :unprocessable_entity }
