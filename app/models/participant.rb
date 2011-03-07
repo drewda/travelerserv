@@ -36,4 +36,12 @@ class Participant < ActiveRecord::Base
       nil
     end
   end
+  
+  def lab
+    begin
+      self.participant_in_studies.where(:active => true).first.study.lab
+    rescue
+      nil
+    end
+  end
 end
