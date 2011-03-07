@@ -20,4 +20,20 @@ class Participant < ActiveRecord::Base
   def title
     self.full_name
   end
+  
+  def default_travel_log_rate
+    begin
+      self.participant_in_studies.where(:active => true).first.study.lab.default_travel_log_rate
+    rescue
+      nil
+    end
+  end
+
+  def default_travel_log_adapt_rate
+    begin
+      self.participant_in_studies.where(:active => true).first.study.lab.default_travel_log_adapt_rate
+    rescue
+      nil
+    end
+  end
 end
