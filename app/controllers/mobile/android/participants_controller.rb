@@ -8,8 +8,8 @@ class Mobile::Android::ParticipantsController < ApplicationController
     end
 
     respond_to do |format|
-      format.xml  { render :xml => @participants }
-      format.json { render :json => @participants }
+      format.xml  { render :xml => @participants.to_xml(:include => [:devices]) }
+      format.json { render :json => @participants.to_json(:include => [:devices]) }
     end
   end
 end
