@@ -105,17 +105,19 @@ svg {
 }
 
 .placard {
-  width: 120px;
+  width: 200px;
+  height: 30px;
   text-align: center;
   border-left:1px solid #cccccc;
   border-right:1px solid #ffffff;
 }
 .placard .number {
-  font-size: 36pt;
+/*  font-weight: bold;*/
 }
-.placard .title {
+.placard {
   text-transform: uppercase;
   font-size: 14pt;
+  font-weight: bold;
 }
 
 #travel-panel .placard {
@@ -130,18 +132,23 @@ svg {
 #travel-panel #activities-placard {
   
 }
-
-#places-panel .placard {
-  float: left;
+#fixes-panel {
+  display: none;
+  left: 0;
+  bottom: 30px;
+  width: 200px;
+  height: 200px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
 }
-#places-panel #landmarks-placard {
-  
+li.device-on-off-list-item {
+  min-height: 28px;
+  padding-left: 20px;
+  list-style: none;
 }
-#places-panel #visits-placard {
-  
-}
-#places-panel #estimates-placard {
-  
+li.device-on-off-list-item.mouseover {
+ background-color: #ffffcc;
 }
 
 a, a:visited {
@@ -154,15 +161,44 @@ a:hover {
 
 /* MAP */
 #travel-fix-layer path {
-  fill: #8293ED;
   stroke: #fff;
   stroke-width: 1px;
 }
 #travel-fix-layer path:hover {
   fill: #fff;
-  stroke: #8293ED;
   stroke-width: 2px;
 }
+.travel-fix-device-A path {
+  fill: #E41A1C;
+}
+.travel-fix-device-A path:hover {
+  stroke: #E41A1C;
+}
+.travel-fix-device-B path {
+  fill: #377EB8;
+}
+.travel-fix-device-B path:hover {
+  stroke: #377EB8;
+}
+.travel-fix-device-C path {
+  fill: #4DAF4A;
+}
+.travel-fix-device-C path:hover {
+  stroke: #4DAF4A;
+}
+.travel-fix-device-D path {
+  fill: #984EA3;
+}
+.travel-fix-device-D path:hover {
+  stroke: #984EA3;
+}
+.travel-fix-device-E path {
+  fill: #FF7F00;
+}
+.travel-fix-device-E path:hover {
+  stroke: #FF7F00;
+}         
+          
 #travel-fix-layer text {
   fill: #8293ED;
 }

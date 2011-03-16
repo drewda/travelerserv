@@ -21,6 +21,11 @@ class Participant < ActiveRecord::Base
     self.full_name
   end
   
+  attr_accessor :current_participant
+  def is_current_participant
+    return self == current_participant
+  end
+  
   def default_travel_log_rate
     begin
       self.participant_in_studies.where(:active => true).first.study.lab.default_travel_log_rate

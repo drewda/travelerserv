@@ -125,60 +125,129 @@ svg {
 
 /* line 107, ../../app/stylesheets/viewer.scss */
 .placard {
-  width: 120px;
+  width: 200px;
+  height: 30px;
   text-align: center;
   border-left: 1px solid #cccccc;
   border-right: 1px solid #ffffff;
 }
 
-/* line 113, ../../app/stylesheets/viewer.scss */
+/* line 114, ../../app/stylesheets/viewer.scss */
 .placard .number {
-  font-size: 36pt;
+  /*  font-weight: bold;*/
 }
 
-/* line 116, ../../app/stylesheets/viewer.scss */
-.placard .title {
+/* line 117, ../../app/stylesheets/viewer.scss */
+.placard {
   text-transform: uppercase;
   font-size: 14pt;
+  font-weight: bold;
 }
 
-/* line 121, ../../app/stylesheets/viewer.scss */
+/* line 123, ../../app/stylesheets/viewer.scss */
 #travel-panel .placard {
   float: left;
 }
 
-/* line 134, ../../app/stylesheets/viewer.scss */
-#places-panel .placard {
-  float: left;
+/* line 135, ../../app/stylesheets/viewer.scss */
+#fixes-panel {
+  display: none;
+  left: 0;
+  bottom: 30px;
+  width: 200px;
+  height: 200px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
 }
 
-/* line 147, ../../app/stylesheets/viewer.scss */
+/* line 145, ../../app/stylesheets/viewer.scss */
+li.device-on-off-list-item {
+  min-height: 28px;
+  padding-left: 20px;
+  list-style: none;
+}
+
+/* line 150, ../../app/stylesheets/viewer.scss */
+li.device-on-off-list-item.mouseover {
+  background-color: #ffffcc;
+}
+
+/* line 154, ../../app/stylesheets/viewer.scss */
 a, a:visited {
   color: #1b75bb;
   text-decoration: none;
 }
 
-/* line 151, ../../app/stylesheets/viewer.scss */
+/* line 158, ../../app/stylesheets/viewer.scss */
 a:hover {
   text-decoration: underline;
 }
 
 /* MAP */
-/* line 156, ../../app/stylesheets/viewer.scss */
+/* line 163, ../../app/stylesheets/viewer.scss */
 #travel-fix-layer path {
-  fill: #8293ED;
   stroke: #fff;
   stroke-width: 1px;
 }
 
-/* line 161, ../../app/stylesheets/viewer.scss */
+/* line 167, ../../app/stylesheets/viewer.scss */
 #travel-fix-layer path:hover {
   fill: #fff;
-  stroke: #8293ED;
   stroke-width: 2px;
 }
 
-/* line 166, ../../app/stylesheets/viewer.scss */
+/* line 171, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-A path {
+  fill: #E41A1C;
+}
+
+/* line 174, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-A path:hover {
+  stroke: #E41A1C;
+}
+
+/* line 177, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-B path {
+  fill: #377EB8;
+}
+
+/* line 180, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-B path:hover {
+  stroke: #377EB8;
+}
+
+/* line 183, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-C path {
+  fill: #4DAF4A;
+}
+
+/* line 186, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-C path:hover {
+  stroke: #4DAF4A;
+}
+
+/* line 189, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-D path {
+  fill: #984EA3;
+}
+
+/* line 192, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-D path:hover {
+  stroke: #984EA3;
+}
+
+/* line 195, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-E path {
+  fill: #FF7F00;
+}
+
+/* line 198, ../../app/stylesheets/viewer.scss */
+.travel-fix-device-E path:hover {
+  stroke: #FF7F00;
+}
+
+/* line 202, ../../app/stylesheets/viewer.scss */
 #travel-fix-layer text {
   fill: #8293ED;
 }

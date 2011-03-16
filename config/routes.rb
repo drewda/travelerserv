@@ -6,6 +6,7 @@ Travelerserv::Application.routes.draw do
     resources :participants do
       resources :travel_fixes
     end
+    resources :devices
   end
 
   # mobile api's
